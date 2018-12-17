@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
+    <script th:src="@{/static/js/jquery.js}"></script>
+    <script th:src="@{/static/layui/layui.js}"></script>
+    <script>
+        function createTime(v) {
+            var date = new Date(v);
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? '0' + m : m;
+            var d = date.getDate();
+            d = d < 10 ? ("0" + d) : d;
+            var str = y + "-" + m + "-" + d;
+            console.log(y);
+            return str;
+        }
+
+        layui.use('table', function () {
+            var table = layui.table;
+            //第一个实例
+            table.render({
+                elem: '#staffTable'
+                , height: 'full'
+                , url: '/staff/showAllStaff' //数据接口
+                , page: true //开启分页
+                , cols: [
+                    [ //表头
+                        {field: 'oa_staff_name', title: '姓名'}
+                        , {field: 'oa_staff_sex', title: '性别', sort: true}
+                        , {field: 'oa_staff_phone', title: '手机号码'}
+                        , {
+                        field: 'oa_staff_birthday', title: '出生日期', sort: true, templet: function (d) {
+                            return '<span>' + createTime(d.oa_staff_birthday) + '</span>'
+                        }
+                    }, {
+                        field: 'oa_staff_entryTime', title: '入职时间', sort: true, templet: function (d) {
+                            return '<span>' + createTime(d.oa_staff_entryTime) + '</span>'
+                        }
+                    }
+                        , {field: 'oa_department_name', title: '部门', sort: true}
+                        , {field: 'oa_post_name', title: '岗位', sort: true}
+                        , {field: 'oa_staff_state', title: '员工状态', sort: true}
+
+                    ]
+                ]
+            });
+
+        });
+    </script>
+</head>
+<body>
+<br>
+<div class="demoTable">
+    &nbsp;&nbsp;按名字搜索：
+    <div class="layui-inline">
+        <input class="layui-input" name="keyWord" id="keyWord" autocomplete="off">
+    </div>
+    <button class="layui-btn" data-type="reload">搜索</button>
+
+</div>
+<table id="staffTable" lay-filter="test"></table>
+</body>
+</html>

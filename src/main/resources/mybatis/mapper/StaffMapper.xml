@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.java.zpoa.dao.StaffMapper">
+
+    <select id="findAllStaff" resultType="m">
+        select s.oa_staff_id,
+               s.oa_staff_name,
+               oa_staff_sex,
+               s.oa_staff_entryTime,
+               s.oa_staff_phone,
+               oa_staff_birthday,
+               s.oa_staff_state,
+               d.oa_post_name,
+               d.oa_department_name
+        from oa_staff s
+                 LEFT JOIN (SELECT p.oa_post_id,p.oa_post_name,d.oa_department_name
+                            from oa_post p,
+                                 oa_department d
+                            where p.oa_department_id = d.oa_department_id) d
+                           ON d.oa_post_id = s.oa_post_id
+    </select>
+
+    <insert id="addStaff" parameterType="m">
+        insert into oa_staff
+        values (null, #{name}, #{sex}, #{entryTime}, #{phone}, #{birthday}, #{post}, #{pwd}, '在职');
+    </insert>
+
+    <update id="updStaff" parameterType="m">
+        update oa_staff
+        set oa_staff_name      = #{name},
+            oa_staff_entryTime = #{entryTime},
+            oa_staff_phone     = #{phone},
+            oa_staff_birthday  = #{birthday},
+            oa_staff_post      = #{post},
+            oa_department_id   = #{depId}
+        where oa_staff_id = #{id}
+    </update>
+
+    <delete id="delStaff" parameterType="java.lang.String">
+        delete
+        FROM oa_staff
+        where oa_staff_id = #{id}
+    </delete>
+
+    <select id="staffLogin" parameterType="m" resultType="m">
+        SELECT *
+        FROM `oa_staff`
+        where oa_staff_phone = #{account}
+          and oa_staff_pwd = #{password};
+    </select>
+</mapper>

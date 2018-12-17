@@ -1,0 +1,23 @@
+server:
+  port: 9999
+mybatis:
+  config-location: classpath:mybatis/mybatis.cfg.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+spring:
+  application:
+    name: zpoa
+  datasource:
+    url: jdbc:mysql://192.168.10.175/zpoa?useUnicode=true&characterEncoding=utf8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+    servlet:
+      content-type: text/html
+  mvc:
+    static-path-pattern: /static/**
+
+
+

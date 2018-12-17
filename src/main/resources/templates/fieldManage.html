@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
+    <script th:src="@{/static/js/jquery.js}"></script>
+    <script th:src="@{/static/layui/layui.js}"></script>
+    <script>
+        var form;
+        var layer;
+        var deptId;
+        var deptName;
+        layui.use(['form', 'layer'], function () {
+            form = layui.form;
+            layer = layui.layer;
+
+            form.on('select(deptS)', function (data) {
+                if (data.value != 0)
+                    $('#updDeptName').removeAttr("disabled");
+                deptId = data.value;
+                deptName = $('select[name=dept]').find('option:selected').text();
+            });
+        });
+
+        $(function () {
+            $('#updDeptName').click(function () {
+                layer.confirm('<input type="text" class="layui-input" id="newDeptName" value="' + deptName + '"/><input type="hidden" id="deptId" value="' + deptId + '"/>', {
+                    btn: ['保存', '取消'],
+                    title: "修改部门名称"
+                }, function (index) {
+                    $.ajax({
+                        url: "/dept/updDeptName",
+                        type: "post",
+                        data: {"deptId": $('#deptId').val(), "newDeptName": $('#newDeptName').val()},
+                        success: function (data) {
+                            var json = JSON.parse(data);
+                            $('select[name=dept]').html();
+                            var deptHtml = '';
+                            $.each(json, function (i, d) {
+                                deptHtml += '<option value="' + d.oa_department_id + '">' + d.oa_department_name + '</option>';
+                            });
+                            $('select[name=dept]').html(deptHtml);
+                            $('select[name=dept]').val(deptId);
+                            deptName = $('select[name=dept]').find('option:selected').text();
+                            form.render();
+                            layer.closeAll();
+                        }
+                    })
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>部门 & 工作岗位</legend>
+</fieldset>
+<form class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属部门</label>
+        <div class="layui-input-inline">
+            <select lay-filter="deptS" name="dept" lay-verify="required">
+                <option value="0"></option>
+                <option th:each="d:${deptList}" th:value="${d.oa_department_id}"
+                        th:text="${d.oa_department_name}"></option>
+            </select>
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" disabled="disabled" id="updDeptName"
+                   value="修改部门名称"/>
+        </div>
+        <label class="layui-form-label">部门名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" required lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" disabled="disabled" id="updDeptName"
+                   value="新增部门"/>
+        </div>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>员工状态</legend>
+    </fieldset>
+</form>
+</body>
+</html>

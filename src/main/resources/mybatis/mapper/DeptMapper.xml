@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.java.zpoa.dao.DeptMapper">
+    <select id="allDepartment" resultType="m">
+        select * from oa_department;
+    </select>
+
+    <select id="allPostByDeptId" resultType="m" parameterType="java.lang.String">
+        select p.oa_post_id,p.oa_post_name
+        from oa_department d, oa_post p
+        where d.oa_department_id = p.oa_department_id
+          and d.oa_department_id = #{id}
+    </select>
+
+    <update id="updDeptNameById" parameterType="m">
+        UPDATE oa_department set oa_department_name = #{newDeptName} where oa_department_id = #{deptId}
+    </update>
+</mapper>
