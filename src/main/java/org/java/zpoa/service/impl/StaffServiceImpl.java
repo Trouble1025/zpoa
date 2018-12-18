@@ -2,9 +2,11 @@ package org.java.zpoa.service.impl;
 
 import org.java.zpoa.dao.StaffMapper;
 import org.java.zpoa.service.StaffService;
+import org.java.zpoa.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +22,14 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Map<String, Object>> findAllStaff() {
-        return staffMapper.findAllStaff();
+    public String findAllStaff() {
+        Map<String,Object> json = new HashMap();
+        List<Map<String, Object>> data = staffMapper.findAllStaff();
+        json.put("code",0);
+        json.put("msg","");
+        json.put("count",data.size());
+        json.put("data",data);
+        return JsonUtils.objectToJson(json);
     }
 
     @Override

@@ -39,18 +39,11 @@ public class StaffController {
     @RequestMapping("showAllStaff")
     @ResponseBody
     public Object showAllStaff(){
-        Map<String,Object> json = new HashMap<String,Object>();
-        List<Map<String, Object>> data = staffService.findAllStaff();
-        json.put("code",0);
-        json.put("msg","");
-        json.put("count",data.size());
-        json.put("data",data);
-        return JsonUtils.objectToJson(json);
+        return staffService.findAllStaff();
     }
 
     @RequestMapping("addStaff")
     public String addStaff(@RequestParam Map staff){
-        System.out.println(staff);
         staffService.addStaff(staff);
         return "staffTable";
     }

@@ -9,7 +9,7 @@ public interface StaffService {
     Map<String,Object> staffLogin(Map<String,Object> m);
 
     //查询所有员工信息
-    List<Map<String,Object>> findAllStaff();
+    String findAllStaff();
 
     //添加员工
     void addStaff(Map<String,Object> m);

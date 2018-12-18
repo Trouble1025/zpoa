@@ -16,10 +16,19 @@
             layer = layui.layer;
 
             form.on('select(deptS)', function (data) {
+                //部门选择改变事件
                 if (data.value != 0)
                     $('#updDeptName').removeAttr("disabled");
                 deptId = data.value;
                 deptName = $('select[name=dept]').find('option:selected').text();
+                $.ajax({
+                    url:"/dept/allPostByDeptId",
+                    type:"post",
+                    data:{"id":deptId},
+                    success:function (data) {
+                        reloadPost(data);
+                    }
+                });
             });
         });
 
@@ -34,22 +43,63 @@
                         type: "post",
                         data: {"deptId": $('#deptId').val(), "newDeptName": $('#newDeptName').val()},
                         success: function (data) {
-                            var json = JSON.parse(data);
-                            $('select[name=dept]').html();
-                            var deptHtml = '';
-                            $.each(json, function (i, d) {
-                                deptHtml += '<option value="' + d.oa_department_id + '">' + d.oa_department_name + '</option>';
-                            });
-                            $('select[name=dept]').html(deptHtml);
-                            $('select[name=dept]').val(deptId);
-                            deptName = $('select[name=dept]').find('option:selected').text();
-                            form.render();
-                            layer.closeAll();
+                            reloadDept(data);
                         }
                     })
                 });
             });
+
+            $('#addNewDept').click(function () {
+                //新增部门弹出层
+                layer.confirm('<input type="text" class="layui-input" id="addDeptName"/>', {
+                    btn: ['添加', '取消'],
+                    title: "新增部门名称"
+                }, function (index) {
+                    var addDeptName = $('#addDeptName').val().trim();
+                    if(addDeptName != null && addDeptName != "" && addDeptName.length > 0){
+                        $.ajax({
+                            url:"/dept/addNewDept",
+                            type:"post",
+                            data:{"addDeptName":addDeptName},
+                            success:function (data) {
+                                reloadDept(data);
+                            }
+                        });
+                    }
+                });
+            });
+
         });
+
+        function reloadDept(data) {
+            //重新加载选择部门的下拉框
+            var json = JSON.parse(data);
+            $('select[name=dept]').html();
+            var deptHtml = '';
+            $.each(json, function (i, d) {
+                deptHtml += '<option value="' + d.oa_department_id + '">' + d.oa_department_name + '</option>';
+            });
+            $('select[name=dept]').html(deptHtml);
+            $('select[name=dept]').val(deptId);
+            deptName = $('select[name=dept]').find('option:selected').text();
+            form.render();
+            layer.closeAll();
+        }
+
+        function reloadPost(data) {
+            //重新加载选择岗位的下拉框
+            var json = JSON.parse(data);
+            $('select[name=post]').html();
+            var deptHtml = '';
+            $.each(json, function (i, d) {
+                deptHtml += '<option value="' + d.oa_post_id + '">' + d.oa_post_name + '</option>';
+            });
+            $('select[name=post]').html(deptHtml);
+            $('select[name=post]').val(deptId);
+            deptName = $('select[name=dept]').find('option:selected').text();
+            form.render();
+            layer.closeAll();
+        }
     </script>
 </head>
 <body>
@@ -70,13 +120,28 @@
             <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" disabled="disabled" id="updDeptName"
                    value="修改部门名称"/>
         </div>
-        <label class="layui-form-label">部门名称:</label>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="addNewDept"
+                   value="新增部门"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作岗位</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" required lay-verify="required" autocomplete="off" class="layui-input">
+            <select name="post" lay-verify="required">
+                <option value="0"></option>
+                <!--<option th:each="d:${deptList}" th:value="${d.oa_department_id}"-->
+                        <!--th:text="${d.oa_department_name}"></option>-->
+            </select>
         </div>
         <div class="layui-form-mid layui-word-aux">
-            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" disabled="disabled" id="updDeptName"
-                   value="新增部门"/>
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" disabled="disabled" id="updPostName"
+                   value="修改岗位名称"/>
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="addNewPost"
+                   value="新增岗位"/>
         </div>
     </div>
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">

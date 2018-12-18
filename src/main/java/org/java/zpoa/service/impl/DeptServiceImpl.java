@@ -28,4 +28,11 @@ public class DeptServiceImpl implements DeptService {
     public void updDeptNameById(Map<String, Object> map) {
         deptMapper.updDeptNameById(map);
     }
+
+    @Override
+    public void addNewDept(Map<String, Object> map) {
+        deptMapper.addNewDept(map);
+    }
+
+
 }

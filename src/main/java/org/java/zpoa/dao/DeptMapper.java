@@ -15,4 +15,7 @@ public interface DeptMapper {
 
     //根据部门Id修改部门名称
     void updDeptNameById(Map<String,Object> map);
+
+    //新增一个部门
+    void addNewDept(Map<String,Object> map);
 }

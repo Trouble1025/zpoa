@@ -15,4 +15,8 @@
     <update id="updDeptNameById" parameterType="m">
         UPDATE oa_department set oa_department_name = #{newDeptName} where oa_department_id = #{deptId}
     </update>
+    
+    <insert id="addNewDept" parameterType="m">
+        insert into oa_department values(null,#{addDeptName})
+    </insert>
 </mapper>

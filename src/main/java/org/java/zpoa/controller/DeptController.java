@@ -25,4 +25,10 @@ public class DeptController {
         deptService.updDeptNameById(map);
         return JsonUtils.objectToJson(deptService.allDepartment());
     }
+
+    @RequestMapping("addNewDept")
+    public Object addDeptName(@RequestParam Map map){
+        deptService.addNewDept(map);
+        return JsonUtils.objectToJson(deptService.allDepartment());
+    }
 }
