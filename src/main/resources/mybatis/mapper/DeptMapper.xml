@@ -19,4 +19,12 @@
     <insert id="addNewDept" parameterType="m">
         insert into oa_department values(null,#{addDeptName})
     </insert>
+
+    <update id="updPostNameById" parameterType="m">
+        UPDATE oa_post set oa_post_name = #{newPostName} where oa_post_id = #{postId}
+    </update>
+
+    <insert id="addNewPost" parameterType="m">
+        insert into oa_post values(null,#{addPostName},#{deptId});
+    </insert>
 </mapper>

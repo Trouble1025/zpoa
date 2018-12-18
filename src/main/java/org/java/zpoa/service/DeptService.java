@@ -15,4 +15,10 @@ public interface DeptService {
 
     //新增一个部门
     void addNewDept(Map<String,Object> map);
+
+    //根据岗位ID修改岗位名称
+    void updPostNameById(Map<String,Object> map);
+
+    //新增一个工作岗位
+    void addNewPost(Map<String,Object> map);
 }

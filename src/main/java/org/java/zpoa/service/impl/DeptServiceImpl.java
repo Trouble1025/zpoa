@@ -34,5 +34,15 @@ public class DeptServiceImpl implements DeptService {
         deptMapper.addNewDept(map);
     }
 
+    @Override
+    public void updPostNameById(Map<String, Object> map) {
+        deptMapper.updPostNameById(map);
+    }
+
+    @Override
+    public void addNewPost(Map<String, Object> map) {
+        deptMapper.addNewPost(map);
+    }
+
 
 }

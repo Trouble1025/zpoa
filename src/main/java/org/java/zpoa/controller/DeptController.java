@@ -31,4 +31,16 @@ public class DeptController {
         deptService.addNewDept(map);
         return JsonUtils.objectToJson(deptService.allDepartment());
     }
+
+    @RequestMapping("updPostName")
+    public Object updPostName(@RequestParam Map map){
+        deptService.updPostNameById(map);
+        return JsonUtils.objectToJson(deptService.allPostByDeptId(map.get("deptId").toString()));
+    }
+
+    @RequestMapping("addNewPost")
+    public Object addNewPost(@RequestParam Map map){
+        deptService.addNewPost(map);
+        return JsonUtils.objectToJson(deptService.allPostByDeptId(map.get("deptId").toString()));
+    }
 }
