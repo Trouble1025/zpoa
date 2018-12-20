@@ -22,27 +22,40 @@ public class StaffController {
 
     //打开员工信息列表
     @RequestMapping("staffTable")
-    public String staffTable(){ return "staffTable"; }
+    public String staffTable() {
+        return "/staff/staffTable";
+    }
 
     //打开主页面
     @RequestMapping("main")
-    public String index(){ return "/main"; }
+    public String index() {
+        return "/main";
+    }
 
+    //打开员工信息录入页面
     @RequestMapping("openAddStaff")
-    public String openAddStaff(Map<String,Object> m){
-        m.put("deptList",deptService.allDepartment());
-        return "addStaff";}
+    public String openAddStaff(Map<String, Object> m) {
+        m.put("deptList", deptService.allDepartment());
+        return "/staff/addStaff";
+    }
 
+    //查询所有员工信息
     @RequestMapping("showAllStaff")
     @ResponseBody
-    public Object showAllStaff(){
+    public Object showAllStaff() {
         return staffService.findAllStaff();
     }
 
+    //新增一个员工
     @RequestMapping("addStaff")
-    public String addStaff(@RequestParam Map staff){
+    public String addStaff(@RequestParam Map staff) {
         staffService.addStaff(staff);
-        return "staffTable";
+        return "/staff/staffTable";
     }
 
+    //打开个人信息页面
+    @RequestMapping("staffDetail")
+    public String staffDetail() {
+        return "/staff/staffDetail";
+    }
 }

@@ -48,11 +48,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
-        </dependency>
         <!--热部署-->
 
         <dependency>
@@ -61,6 +56,8 @@
             <optional>true</optional>
             <scope>true</scope>
         </dependency>
+
+
     </dependencies>
 
     <build>
@@ -79,6 +76,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

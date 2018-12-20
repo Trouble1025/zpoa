@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
+    <script th:src="@{/static/js/jquery.js}"></script>
+    <script th:src="@{/static/layui/layui.js}"></script>
+    <script>
+
+        layui.use(['form', 'layer'], function () {
+            form = layui.form;
+            layer = layui.layer;
+
+        });
+
+    </script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>角色权限</legend>
+</fieldset>
+<form class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-inline">
+            <select lay-filter="deptS" name="dept" lay-verify="required">
+                <option value="0"></option>
+                <!--<option th:each="d:${deptList}" th:value="${d.oa_department_id}"-->
+                        <!--th:text="${d.oa_department_name}"></option>-->
+            </select>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">拥有权限</label>
+            <input type="checkbox" name="" title="写作" checked>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>访问权限</legend>
+    </fieldset>
+</form>
+</body>
+</html>

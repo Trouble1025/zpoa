@@ -9,15 +9,23 @@
                s.oa_staff_entryTime,
                s.oa_staff_phone,
                oa_staff_birthday,
-               s.oa_staff_state,
-               d.oa_post_name,
-               d.oa_department_name
+               st.oa_staffState_name,
+               dept.oa_post_name,
+               dept.oa_department_name,
+               role.oa_role_name
         from oa_staff s
                  LEFT JOIN (SELECT p.oa_post_id,p.oa_post_name,d.oa_department_name
                             from oa_post p,
                                  oa_department d
-                            where p.oa_department_id = d.oa_department_id) d
-                           ON d.oa_post_id = s.oa_post_id
+                            where p.oa_department_id = d.oa_department_id) dept
+                           ON dept.oa_post_id = s.oa_post_id
+                 LEFT JOIN oa_staffState st
+                           ON st.oa_staffState_id = s.oa_staffState_id
+                 LEFT JOIN (SELECT sr.oa_staff_id, r.oa_role_name
+                            FROM oa_role r,
+                                 staff_role sr
+                            where sr.oa_role_id = r.oa_role_id
+            ) role ON s.oa_staff_id = role.oa_staff_id;
     </select>
 
     <insert id="addStaff" parameterType="m">
@@ -43,9 +51,22 @@
     </delete>
 
     <select id="staffLogin" parameterType="m" resultType="m">
-        SELECT *
-        FROM `oa_staff`
-        where oa_staff_phone = #{account}
-          and oa_staff_pwd = #{password};
+        SELECT s.oa_staff_id,
+               s.oa_staff_name,
+               oa_staff_sex,
+               oa_staff_phone,
+               oa_staff_birthday,
+               st.oa_staffState_name,
+               oa_post_name,
+               oa_department_name
+        FROM `oa_staff` s,
+             oa_post p,
+             oa_department d,
+             oa_staffState st
+        WHERE s.oa_post_id = p.oa_post_id
+          and p.oa_department_id = d.oa_department_id
+          and oa_staff_phone = #{account}
+          and oa_staff_pwd = #{password}
+          and s.oa_staffState_id = st.oa_staffState_id;
     </select>
 </mapper>

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 
 @Controller
-@RequestMapping("common")
-public class CommonController {
+@RequestMapping("super")
+public class SuperController {
 
     @Autowired
     DeptService deptService;
@@ -18,6 +18,13 @@ public class CommonController {
     @RequestMapping("openFieldManage")
     public String openFieldManage(Map m) {
         m.put("deptList",deptService.allDepartment());
-        return "/fieldManage";
+        return "/super/fieldManage";
+    }
+
+    //打开权限分配页面
+    @RequestMapping("openPowerManage")
+    public String openPowerManage(){
+
+        return "/super/powerManage";
     }
 }

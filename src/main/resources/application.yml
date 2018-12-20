@@ -19,5 +19,3 @@ spring:
   mvc:
     static-path-pattern: /static/**
 
-
-

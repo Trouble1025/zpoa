@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
+    <script th:src="@{/static/js/jquery.js}"></script>
+    <script th:src="@{/static/layui/layui.js}"></script>
+    <script>
+        layui.use(['form','laydate'], function () {
+            var form = layui.form
+            laydate = layui.laydate;
+            laydate.render({
+                elem: '#leaveBeginDate'
+            });
+            laydate.render({
+                elem: '#leaveEndDate'
+            });
+        });
+    </script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>请假申请</legend>
+</fieldset>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_staff_name}">
+        </div>
+        <label class="layui-form-label">职位:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_post_name}">
+        </div>
+        <label class="layui-form-label">所属部门:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_department_name}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">请假类别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="sex" value="事假" title="事假" checked="">
+            <input type="radio" name="sex" value="病假" title="病假" >
+            <input type="radio" name="sex" value="婚假" title="婚假" >
+            <input type="radio" name="sex" value="丧假" title="丧假" >
+            <input type="radio" name="sex" value="产假" title="产假" >
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">请假事由:</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">开始日期</label>
+        <div class="layui-input-inline">
+            <input type="text" name="leaveBeginDate" id="leaveBeginDate" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+        </div>
+        <label class="layui-form-label">截止日期</label>
+        <div class="layui-input-inline">
+            <input type="text" name="leaveEndDate" id="leaveEndDate" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit>立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>请假记录</legend>
+</fieldset>
+</body>
+</html>
