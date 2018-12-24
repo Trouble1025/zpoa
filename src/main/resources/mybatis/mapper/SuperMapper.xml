@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.java.zpoa.dao.SuperMapper">
+    <select id="findAllRole" resultType="m">
+      select * from oa_role;
+    </select>
+    
+    <select id="findAllPower" resultType="m">
+      select * from oa_power;
+    </select>
+    
+    <update id="updRoleName" parameterType="m">
+        UPDATE oa_role SET oa_role_name = #{newRoleName} WHERE oa_role_id = #{roleId}
+    </update>
+
+    <insert id="addRoleName" parameterType="java.lang.String">
+        insert into oa_role values(null,#{roleName});
+    </insert>
+
+    <update id="updStaffState" parameterType="m">
+        UPDATE oa_staffState SET oa_staffState_name = #{newStateName} WHERE oa_staffState_id = #{staffStateId}
+    </update>
+    
+    <insert id="addStaffStateName" parameterType="java.lang.String">
+        insert into oa_staffState values(null,#{addStaffStateName});
+    </insert>
+</mapper>

@@ -69,4 +69,8 @@
           and oa_staff_pwd = #{password}
           and s.oa_staffState_id = st.oa_staffState_id;
     </select>
+
+    <select id="findAllStaffState" resultType="m">
+        SELECT * FROM `oa_staffState`;
+    </select>
 </mapper>

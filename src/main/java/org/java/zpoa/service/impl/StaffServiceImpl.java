@@ -47,4 +47,9 @@ public class StaffServiceImpl implements StaffService {
 
     }
 
+    @Override
+    public List<Map<String, Object>> findAllStaffState() {
+        return staffMapper.findAllStaffState();
+    }
+
 }

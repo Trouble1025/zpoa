@@ -1,5 +1,6 @@
+var form;
+var layer;
 // -----------------------------------------------------------加载layui
-
 layui.use(['form', 'layer'], function () {
     form = layui.form;
     layer = layui.layer;
@@ -20,12 +21,15 @@ layui.use(['form', 'layer'], function () {
 
 });
 // -----------------------------------------------------------部门岗位
-var form;
-var layer;
+
 var deptId;
 var deptName;
 var postId;
 var postName;
+var roleId;
+var roleName;
+var staffStateId;
+var staffStateName;
 
 $(function () {
     $('#updDeptName').click(function () {
@@ -97,6 +101,7 @@ $(function () {
     });
 
     $('#addNewPost').click(function () {
+        //新增岗位名称
         if (deptId == 0 || deptId == undefined)
             return
         layer.confirm('<input type="text" class="layui-input" id="addPostName"/>', {
@@ -117,6 +122,93 @@ $(function () {
         });
     });
 
+    $('#updRoleName').click(function () {
+        //更改角色名称按钮
+        roleId = $('select[name=role]').find('option:selected').val();
+        roleName = $('select[name=role]').find('option:selected').text();
+        if (roleId == 0 || roleId == undefined)
+            return
+        layer.confirm('<input type="text" class="layui-input" id="newRoleName" value="' + roleName + '"/><input type="hidden" id="roleId" value="' + roleId + '"/>', {
+            btn: ['保存', '取消'],
+            title: "修改角色名称"
+        }, function (index) {
+            var newRoleName = $('#newRoleName').val().trim();
+            if (newRoleName != null && newRoleName != "" && newRoleName.length > 0) {
+                $.ajax({
+                    url: "/super/updRoleName",
+                    type: "post",
+                    data: {"roleId": $('#roleId').val(), "newRoleName": newRoleName},
+                    success: function (data) {
+                        reloadRole(data);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#addNewRole').click(function () {
+        //新增角色
+        layer.confirm('<input type="text" class="layui-input" id="addRoleName"/>', {
+            btn: ['添加', '取消'],
+            title: "新增角色名称"
+        }, function (index) {
+            var addRoleName = $('#addRoleName').val().trim();
+            if (addRoleName != null && addRoleName != "" && addRoleName.length > 0) {
+                $.ajax({
+                    url: "/super/addRoleName",
+                    type: "post",
+                    data: {"roleName": addRoleName},
+                    success: function (data) {
+                        reloadRole(data);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#updStaffState').click(function () {
+        //更改状态名称按钮
+        staffStateId = $('select[name=staffState]').find('option:selected').val();
+        staffStateName = $('select[name=staffState]').find('option:selected').text();
+        if (staffStateId == 0 || staffStateId == undefined)
+            return
+        layer.confirm('<input type="text" class="layui-input" id="newStateName" value="' + staffStateName + '"/><input type="hidden" id="staffStateId" value="' + staffStateId + '"/>', {
+            btn: ['保存', '取消'],
+            title: "修改角色名称"
+        }, function (index) {
+            var newStateName = $('#newStateName').val().trim();
+            if (newStateName != null && newStateName != "" && newStateName.length > 0) {
+                $.ajax({
+                    url: "/super/updStaffStateName",
+                    type: "post",
+                    data: {"staffStateId": $('#staffStateId').val(), "newStateName": newStateName},
+                    success: function (data) {
+                        reloadStaffState(data);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#addNewStaffState').click(function () {
+        //新增员工状态
+        layer.confirm('<input type="text" class="layui-input" id="addStaffStateName"/>', {
+            btn: ['添加', '取消'],
+            title: "新增状态名称"
+        }, function (index) {
+            var addStaffStateName = $('#addStaffStateName').val().trim();
+            if (addStaffStateName != null && addStaffStateName != "" && addStaffStateName.length > 0) {
+                $.ajax({
+                    url: "/super/addStaffStateName",
+                    type: "post",
+                    data: {"stateName": addStaffStateName},
+                    success: function (data) {
+                        reloadStaffState(data);
+                    }
+                });
+            }
+        });
+    });
 });
 
 function reloadDept(data) {
@@ -149,4 +241,32 @@ function reloadPost(data) {
     layer.closeAll();
 }
 
-// -----------------------------------------------------------角色
+function reloadRole(data) {
+    //重新加载选择角色的下拉框
+    var json = JSON.parse(data);
+    $('select[name=role]').html();
+    var roleHtml = '';
+    $.each(json, function (i, d) {
+        roleHtml += '<option value="' + d.oa_role_id + '">' + d.oa_role_name + '</option>';
+    });
+    $('select[name=role]').html(roleHtml);
+    $('select[name=role]').val(roleId);
+    roleName = $('select[name=role]').find('option:selected').text();
+    form.render();
+    layer.closeAll();
+}
+
+function reloadStaffState(data) {
+    //重新加载选择角色的下拉框
+    var json = JSON.parse(data);
+    $('select[name=staffState]').html();
+    var staffStateHtml = '';
+    $.each(json, function (i, d) {
+        staffStateHtml += '<option value="' + d.oa_staffState_id + '">' + d.oa_staffState_name + '</option>';
+    });
+    $('select[name=staffState]').html(staffStateHtml);
+    $('select[name=staffState]').val(staffStateId);
+    staffStateName = $('select[name=staffState]').find('option:selected').text();
+    form.render();
+    layer.closeAll();
+}

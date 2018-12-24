@@ -22,4 +22,6 @@ public interface StaffMapper {
     //删除员工信息
     void delStaff(String id);
 
+    //所有员工状态
+    List<Map<String,Object>> findAllStaffState();
 }

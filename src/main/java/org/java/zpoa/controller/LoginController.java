@@ -21,7 +21,7 @@ public class LoginController {
     public String login(@RequestParam Map<String,Object> m, HttpServletRequest req){
         Map<String, Object> staff = staffService.staffLogin(m);
         if(staff == null)
-            return "err";
+            return "/index";
         req.getSession().setAttribute("account",staff);
         return "/main";
     }
