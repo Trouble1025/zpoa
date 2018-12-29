@@ -22,4 +22,22 @@ public interface SuperService {
 
     //新增员工状态
     void addStaffStateName(String stateName);
+
+    //更新权限名称
+    void updPowerName(Map<String,Object> map);
+
+    //新增操作权限
+    void addNewPower(String powerName);
+
+    //根据角色Id查操作权限
+    List<Map<String,Object>> findPowerByRoleId(String roleId);
+
+    //给角色添加权限
+    void addRolePower(Map<String,Object> map);
+
+    //根据角色ID删除所有权限
+    void delPowerByRoleId(String roleId);
+
+    //根据角色ID找角色名称
+    String getRoleNameById(String roleId);
 }

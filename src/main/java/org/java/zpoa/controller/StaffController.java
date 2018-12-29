@@ -2,6 +2,7 @@ package org.java.zpoa.controller;
 
 import org.java.zpoa.service.DeptService;
 import org.java.zpoa.service.StaffService;
+import org.java.zpoa.service.SuperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,9 @@ public class StaffController {
     @Autowired
     DeptService deptService;
 
+    @Autowired
+    SuperService superService;
+
     //打开员工信息列表
     @RequestMapping("staffTable")
     public String staffTable() {
@@ -36,14 +40,16 @@ public class StaffController {
     @RequestMapping("openAddStaff")
     public String openAddStaff(Map<String, Object> m) {
         m.put("deptList", deptService.allDepartment());
+        m.put("staffStateList",staffService.findAllStaffState());
+        m.put("roleList",superService.findAllRole());
         return "/staff/addStaff";
     }
 
     //查询所有员工信息
     @RequestMapping("showAllStaff")
     @ResponseBody
-    public Object showAllStaff() {
-        return staffService.findAllStaff();
+    public Object showAllStaff(@RequestParam Map m) {
+        return staffService.findAllStaff(m);
     }
 
     //新增一个员工

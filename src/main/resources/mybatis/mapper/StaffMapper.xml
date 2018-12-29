@@ -2,35 +2,60 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.java.zpoa.dao.StaffMapper">
 
+    <select id="allStaffCount" resultType="java.lang.Integer" parameterType="m">
+        select count(*)
+        from oa_staff
+        <where>
+            <if test="staffName != null">
+                oa_staff_name like '%${staffName}%'
+            </if>
+        </where>
+        ;
+    </select>
+
     <select id="findAllStaff" resultType="m">
         select s.oa_staff_id,
-               s.oa_staff_name,
-               oa_staff_sex,
-               s.oa_staff_entryTime,
-               s.oa_staff_phone,
-               oa_staff_birthday,
-               st.oa_staffState_name,
-               dept.oa_post_name,
-               dept.oa_department_name,
-               role.oa_role_name
+        s.oa_staff_name,
+        oa_staff_sex,
+        s.oa_staff_entryTime,
+        s.oa_staff_phone,
+        oa_staff_birthday,
+        st.oa_staffState_name,
+        dept.oa_post_name,
+        dept.oa_department_name,
+        role.oa_role_name
         from oa_staff s
-                 LEFT JOIN (SELECT p.oa_post_id,p.oa_post_name,d.oa_department_name
-                            from oa_post p,
-                                 oa_department d
-                            where p.oa_department_id = d.oa_department_id) dept
-                           ON dept.oa_post_id = s.oa_post_id
-                 LEFT JOIN oa_staffState st
-                           ON st.oa_staffState_id = s.oa_staffState_id
-                 LEFT JOIN (SELECT sr.oa_staff_id, r.oa_role_name
-                            FROM oa_role r,
-                                 staff_role sr
-                            where sr.oa_role_id = r.oa_role_id
-            ) role ON s.oa_staff_id = role.oa_staff_id;
+        LEFT JOIN (SELECT p.oa_post_id,p.oa_post_name,d.oa_department_name
+        from oa_post p,
+        oa_department d
+        where p.oa_department_id = d.oa_department_id) dept
+        ON dept.oa_post_id = s.oa_post_id
+        LEFT JOIN oa_staffState st
+        ON st.oa_staffState_id = s.oa_staffState_id
+        LEFT JOIN (SELECT sr.oa_staff_id, r.oa_role_name
+        FROM oa_role r,
+        staff_role sr
+        where sr.oa_role_id = r.oa_role_id
+        ) role ON s.oa_staff_id = role.oa_staff_id
+        <where>
+            <if test="staffName != null">
+                s.oa_staff_name like '%${staffName}%'
+            </if>
+        </where>
+        <if test="page != null">
+            limit
+            ${page},
+            ${limit}
+        </if>
+        ;
     </select>
 
     <insert id="addStaff" parameterType="m">
         insert into oa_staff
-        values (null, #{name}, #{sex}, #{entryTime}, #{phone}, #{birthday}, #{post}, #{pwd}, '在职');
+        values (null, #{name}, #{sex}, #{entryTime}, #{phone}, #{birthday}, #{post}, #{pwd}, #{staffState});
+        <selectKey keyProperty="staffId" resultType="java.lang.Integer" order="AFTER">
+            select LAST_INSERT_ID();
+        </selectKey>
     </insert>
 
     <update id="updStaff" parameterType="m">
@@ -58,19 +83,33 @@
                oa_staff_birthday,
                st.oa_staffState_name,
                oa_post_name,
-               oa_department_name
+               d.oa_department_id,
+               oa_department_name,
+               sr.oa_role_id,
+               r.oa_role_name
         FROM `oa_staff` s,
              oa_post p,
              oa_department d,
-             oa_staffState st
+             oa_staffState st,
+             staff_role sr,
+             oa_role r
         WHERE s.oa_post_id = p.oa_post_id
           and p.oa_department_id = d.oa_department_id
           and oa_staff_phone = #{account}
           and oa_staff_pwd = #{password}
-          and s.oa_staffState_id = st.oa_staffState_id;
+          and s.oa_staffState_id = st.oa_staffState_id
+          and sr.oa_staff_id = s.oa_staff_id
+          and r.oa_role_id = sr.oa_role_id
     </select>
 
     <select id="findAllStaffState" resultType="m">
-        SELECT * FROM `oa_staffState`;
+        SELECT *
+        FROM `oa_staffState`;
     </select>
+
+    <insert id="addStaffRole" parameterType="m">
+        insert into staff_role
+        values (#{staffId}, #{role})
+    </insert>
+
 </mapper>

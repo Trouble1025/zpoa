@@ -30,6 +30,8 @@ var roleId;
 var roleName;
 var staffStateId;
 var staffStateName;
+var powerId;
+var powerName;
 
 $(function () {
     $('#updDeptName').click(function () {
@@ -209,6 +211,50 @@ $(function () {
             }
         });
     });
+
+    $('#updPowerName').click(function () {
+        //更改状态名称按钮
+        powerId = $('select[name=power]').find('option:selected').val();
+        powerName = $('select[name=power]').find('option:selected').text();
+        if (powerId == 0 || powerId == undefined)
+            return
+        layer.confirm('<input type="text" class="layui-input" id="newPowerName" value="' + powerName + '"/><input type="hidden" id="powerId" value="' + powerId + '"/>', {
+            btn: ['保存', '取消'],
+            title: "修改角色名称"
+        }, function (index) {
+            var newPowerName = $('#newPowerName').val().trim();
+            if (newPowerName != null && newPowerName != "" && newPowerName.length > 0) {
+                $.ajax({
+                    url: "/super/updPowerName",
+                    type: "post",
+                    data: {"powerId": $('#powerId').val(), "newPowerName": newPowerName},
+                    success: function (data) {
+                        reloadPower(data);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#addNewPower').click(function () {
+        //新增操作权限
+        layer.confirm('<input type="text" class="layui-input" id="addPowerName"/>', {
+            btn: ['添加', '取消'],
+            title: "新增状态名称"
+        }, function (index) {
+            var addPowerName = $('#addPowerName').val().trim();
+            if (addPowerName != null && addPowerName != "" && addPowerName.length > 0) {
+                $.ajax({
+                    url: "/super/addPowerName",
+                    type: "post",
+                    data: {"powerName": addPowerName},
+                    success: function (data) {
+                        reloadPower(data);
+                    }
+                });
+            }
+        });
+    });
 });
 
 function reloadDept(data) {
@@ -267,6 +313,21 @@ function reloadStaffState(data) {
     $('select[name=staffState]').html(staffStateHtml);
     $('select[name=staffState]').val(staffStateId);
     staffStateName = $('select[name=staffState]').find('option:selected').text();
+    form.render();
+    layer.closeAll();
+}
+
+function reloadPower(data) {
+    //重新加载权限
+    var json = JSON.parse(data);
+    $('select[name=power]').html();
+    var powerhtml = '';
+    $.each(json, function (i, d) {
+        powerhtml += '<option value="' + d.oa_power_id + '">' + d.oa_power_name + '</option>';
+    });
+    $('select[name=power]').html(powerhtml);
+    $('select[name=power]').val(powerId);
+    powerName = $('select[name=power]').find('option:selected').text();
     form.render();
     layer.closeAll();
 }

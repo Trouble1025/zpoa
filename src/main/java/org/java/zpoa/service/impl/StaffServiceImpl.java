@@ -17,24 +17,32 @@ public class StaffServiceImpl implements StaffService {
     StaffMapper staffMapper;
 
     @Override
-    public Map<String,Object> staffLogin(Map<String, Object> m) {
+    public Map<String, Object> staffLogin(Map<String, Object> m) {
         return staffMapper.staffLogin(m);
     }
 
     @Override
-    public String findAllStaff() {
-        Map<String,Object> json = new HashMap();
-        List<Map<String, Object>> data = staffMapper.findAllStaff();
-        json.put("code",0);
-        json.put("msg","");
-        json.put("count",data.size());
-        json.put("data",data);
+    public String findAllStaff(Map m) {
+        if (m.get("page") != null)
+            m.put("page", (Integer.parseInt(m.get("page").toString()) - 1) * Integer.parseInt(m.get("limit").toString()));
+        Map<String, Object> json = new HashMap();
+        List<Map<String, Object>> data = staffMapper.findAllStaff(m);
+        json.put("code", 0);
+        json.put("msg", "");
+        json.put("count", allStaffCount(m));
+        json.put("data", data);
         return JsonUtils.objectToJson(json);
+    }
+
+    @Override
+    public Integer allStaffCount(Map m) {
+        return staffMapper.allStaffCount(m);
     }
 
     @Override
     public void addStaff(Map<String, Object> m) {
         staffMapper.addStaff(m);
+        staffMapper.addStaffRole(m);
     }
 
     @Override
@@ -50,6 +58,11 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public List<Map<String, Object>> findAllStaffState() {
         return staffMapper.findAllStaffState();
+    }
+
+    @Override
+    public void addStaffRole(Map<String, Object> m) {
+        staffMapper.addStaffRole(m);
     }
 
 }

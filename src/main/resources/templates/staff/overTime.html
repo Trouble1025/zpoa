@@ -7,44 +7,139 @@
     <script th:src="@{/static/js/jquery.js}"></script>
     <script th:src="@{/static/layui/layui.js}"></script>
     <script>
-        layui.use(['form','laydate'], function () {
-            var form = layui.form
+        var form;
+        var laydate;
+        var layer;
+        var table;
+        var tableIns;
+
+        function createTime(v) {
+            var date = new Date(v);
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? '0' + m : m;
+            var d = date.getDate();
+            d = d < 10 ? ("0" + d) : d;
+            var str = y + "-" + m + "-" + d;
+            return str;
+        }
+
+        layui.use(['form', 'laydate', 'layer', 'table'], function () {
+            form = layui.form
             laydate = layui.laydate;
+            layer = layui.layer;
+            table = layui.table;
+
+            tableIns = table.render({
+                elem: '#ovarTimeTable'
+                , height: 'full'
+                , url: '/overTime/findOverTimeByStaffId' //数据接口
+                , page: true //开启分页,
+                , limits: [5, 10]
+                , cols: [
+                    [ //表头
+                        {
+                            field: 'oa_overTime_date', title: '加班日期', sort: true, templet: function (d) {
+                                return '<span>' + createTime(d.oa_overTime_date) + '</span>'
+                            }
+                        }, {field: 'oa_overTime_time', title: '时间(小时)', sort: true}
+                        , {field: 'oa_overTime_reason', title: '加班原因', sort: true}
+                        , {field: 'oa_overTime_state', title: '审核状态', sort: true}
+                    ]
+                ]
+            });
+
 
             laydate.render({
                 elem: '#overTimeDate'
             });
+
+            form.on('submit(go)', function (data) {
+                $.ajax({
+                    url: "/overTime/findHasPowerRole",
+                    type: "post",
+                    success: function (data) {
+                        //找有权限审核的角色
+                        var json = JSON.parse(data);
+                        var appointStaffS = '';
+                        if (json != null && json != undefined && json != "[]") {
+                            $.each(json, function (i, e) {
+                                appointStaffS += '<option value="' + e.oa_staff_id + '">' + e.oa_staff_name + '</option>'
+                            });
+                        }
+
+                        layer.confirm('<form class="layui-form"><select lay-filter="appointS" name="appoint" lay-verify="required">' + appointStaffS + '</select></form>', {
+                            btn: ['提交', '取消'],
+                            title: "指定审批人",
+                            scrollbar: false,
+                            shade: 0,
+                            success: function () {
+                                form.render('select');
+                            }
+                        }, function (index) {
+                            var appointStaff = $('select[name=appoint]').find('option:selected').val();
+                            $('input[name=appointStaff]').val(appointStaff);
+                            if (appointStaff != null && appointStaff != "" && appointStaff.length > 0) {
+                                $.ajax({
+                                    url: "/overTime/addOverTime",
+                                    type: "post",
+                                    data: $('#overTimeForm').serialize(),
+                                    success: function (data) {
+                                        layer.closeAll();
+                                        tableIns.reload();
+                                        $('#resetBtn').click();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                return false;
+            });
+        });
+
+        $(function () {
         });
     </script>
+    <style>
+        .layui-layer-dialog .layui-layer-content {
+            overflow: visible !important;
+        }
+    </style>
 </head>
 <body>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
     <legend>加班申请</legend>
 </fieldset>
-<form class="layui-form" action="">
+<form class="layui-form" id="overTimeForm">
     <div class="layui-form-item">
         <label class="layui-form-label">姓名:</label>
         <div class="layui-input-inline">
-            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_staff_name}">
+            <input type="hidden" name="appointStaff">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input"
+                   th:value="${session.account.oa_staff_name}">
         </div>
         <label class="layui-form-label">工作岗位:</label>
         <div class="layui-input-inline">
-            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_post_name}">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input"
+                   th:value="${session.account.oa_post_name}">
         </div>
         <label class="layui-form-label">所属部门:</label>
         <div class="layui-input-inline">
-            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input" th:value="${session.account.oa_department_name}">
+            <input type="text" name="" lay-verify="required" disabled="disabled" class="layui-input"
+                   th:value="${session.account.oa_department_name}">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">加班日期</label>
         <div class="layui-input-inline">
-            <input type="text" name="overTimeDate" id="overTimeDate" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+            <input type="text" name="overTime_date" id="overTimeDate" autocomplete="off" class="layui-input"
+                   placeholder="yyyy-MM-dd" lay-verify="required">
         </div>
         <label class="layui-form-label">加班时间</label>
         <div class="layui-input-inline">
-            <select name="overTime" lay-verify="required" >
-                <option value="0"></option>
+            <select name="overTime_time" lay-verify="required">
+                <option value=""></option>
                 <option value="0.5">0.5</option>
                 <option value="1">1</option>
                 <option value="1.5">1.5</option>
@@ -60,18 +155,19 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">加班原因</label>
         <div class="layui-input-block">
-            <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+            <textarea placeholder="请输入内容" class="layui-textarea" name="overTime_reason"
+                      lay-verify="required"></textarea>
         </div>
     </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button class="layui-btn" lay-submit>立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-        </div>
+    <div class="layui-input-block">
+        <button class="layui-btn" lay-filter="go" lay-submit id="addOverTimeBtn">提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary" id="resetBtn">重置</button>
+    </div>
     </div>
 </form>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
     <legend>加班记录</legend>
 </fieldset>
+<table id="ovarTimeTable" lay-filter="overTime"></table>
 </body>
 </html>

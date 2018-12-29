@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.java.zpoa.dao.OverTimeMapper">
+    <insert id="addOverTime" parameterType="m">
+        insert into oa_overTime
+        values (null, #{staffId}, #{overTime_reason}, #{overTime_time}, #{overTimeState}, #{overTime_date}, NOW(),
+                #{overTimeNeedPower}, #{appointStaff});
+    </insert>
+
+    <select id="findHasPowerRole" parameterType="m" resultType="m">
+        SELECT s.oa_staff_id,s.oa_staff_name
+        FROM oa_staff s,
+             oa_role r,
+             staff_role sr,
+             oa_department d,
+             oa_post p
+        where s.oa_staff_id = sr.oa_staff_id
+          and sr.oa_role_id = r.oa_role_id
+          and s.oa_post_id = p.oa_post_id
+          and p.oa_department_id = d.oa_department_id
+          and r.oa_role_id in (SELECT r.oa_role_id
+                               from role_power rp,
+                                    oa_role r,
+                                    oa_power p
+                               WHERE rp.oa_power_id = p.oa_power_id
+                                 AND rp.oa_role_id = r.oa_role_id
+                                 AND p.oa_power_id = #{needPower})
+          and d.oa_department_id = #{deptId};
+    </select>
+
+    <select id="findOverTimeByStaffId" parameterType="m" resultType="m">
+        select *
+        from oa_overTime
+        where oa_staff_id = #{staffId}
+        order by oa_overTime_applyTime desc
+        <if test="page != null">
+            limit
+            ${page}
+            ,
+            ${limit}</if>;
+    </select>
+
+    <select id="overTimeCount" resultType="java.lang.Integer" parameterType="m">
+        select count(*)
+        from oa_overTime
+        where oa_staff_id = #{staffId}
+        ;
+    </select>
+
+    <select id="findNeedApprovalById" parameterType="m" resultType="m">
+        SELECT ot.oa_overTime_id,
+               s.oa_staff_name,
+               p.oa_post_name,
+               ot.oa_overTime_reason,
+               ot.oa_overTime_time,
+               ot.oa_overTime_date,
+               ot.oa_overTime_applyTime,
+               ot.oa_overTime_needPower,
+               ot.oa_overTime_needPower in (SELECT rp.oa_power_id
+                                            FROM role_power rp
+                                            WHERE rp.oa_role_id = #{roleId}) isLastPower
+        FROM oa_overtime ot,
+             oa_staff s,
+             oa_post p
+        WHERE s.oa_staff_id = ot.oa_staff_id
+          AND ot.oa_overTime_appointStaffId = #{staffId}
+          AND p.oa_post_id = s.oa_post_id
+          AND ot.oa_overTime_state = '审核中';
+
+    </select>
+
+    <select id="needApprovalCount" parameterType="m" resultType="java.lang.Integer">
+        select count(*)
+        from oa_overTime
+        where oa_overTime_appointStaffId = #{staffId}
+        AND oa_overTime_state = '审核中'
+        ;
+    </select>
+
+    <select id="isLastPower" parameterType="m" resultType="java.lang.Integer">
+        SELECT ot.oa_overTime_needPower in (SELECT rp.oa_power_id
+                                            FROM role_power rp
+                                            where rp.oa_role_id = #{roleId}) isLast
+        FROM oa_overtime ot
+        where ot.oa_overTime_id = #{overTimeId}
+    </select>
+</mapper>

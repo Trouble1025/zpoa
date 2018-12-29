@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
-    <script th:src="@{/static/js/jquery.js}"></script>
-    <script th:src="@{/static/layui/layui.js}"></script>
-    <script th:src="@{/static/js/super/fieldManage.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/static/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/super/fieldManage.js}"></script>
 </head>
 <body>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -77,8 +77,21 @@
 
     <div class="layui-form-item">
     <label class="layui-form-label">所有权限</label>
-    <input type="checkbox" name="power" th:each="p:${powerList}" th:title="${p.oa_power_name}"
-           th:value="${p.oa_power_id}" checked>
+        <div class="layui-input-inline">
+            <select lay-filter="powerS" name="power" lay-verify="required">
+                <option value="0"></option>
+                <option th:each="s:${powerList}" th:value="${s.oa_power_id}"
+                        th:text="${s.oa_power_name}"></option>
+            </select>
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="updPowerName"
+                   value="修改权限名称"/>
+        </div>
+        <div class="layui-form-mid layui-word-aux">
+            <input th:type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="addNewPower"
+                   value="新增操作权限"/>
+        </div>
     </div>
 
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">

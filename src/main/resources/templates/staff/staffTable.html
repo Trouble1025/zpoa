@@ -7,6 +7,9 @@
     <script th:src="@{/static/js/jquery.js}"></script>
     <script th:src="@{/static/layui/layui.js}"></script>
     <script>
+        var table;
+        var tableIns;
+        var staffName;
         function createTime(v) {
             var date = new Date(v);
             var y = date.getFullYear();
@@ -19,9 +22,9 @@
         }
 
         layui.use('table', function () {
-            var table = layui.table;
+            table = layui.table;
             //第一个实例
-            table.render({
+            tableIns = table.render({
                 elem: '#staffTable'
                 , height: 'full'
                 , url: '/staff/showAllStaff' //数据接口
@@ -49,6 +52,17 @@
             });
 
         });
+
+        $(function () {
+            $('#findByName').click(function () {
+                staffName = $('#staffName').val();
+                tableIns.reload({
+                    where:{
+                        staffName:staffName
+                    }
+                });
+            });
+        });
     </script>
 </head>
 <body>
@@ -56,10 +70,9 @@
 <div class="demoTable">
     &nbsp;&nbsp;按名字搜索：
     <div class="layui-inline">
-        <input class="layui-input" name="keyWord" id="keyWord" autocomplete="off">
+        <input class="layui-input" id="staffName" autocomplete="off">
     </div>
-    <button class="layui-btn" data-type="reload">搜索</button>
-
+    <button class="layui-btn" data-type="reload" id="findByName">搜索</button>
 </div>
 <table id="staffTable" lay-filter="test"></table>
 </body>

@@ -23,7 +23,7 @@ public class LoginController {
         if(staff == null)
             return "/index";
         req.getSession().setAttribute("account",staff);
-        return "/main";
+        return "/login";
     }
 
     //退出登录
@@ -33,4 +33,8 @@ public class LoginController {
         return "/index";
     }
 
+    @RequestMapping("main")
+    public String openMain(){
+        return "/main";
+    }
 }

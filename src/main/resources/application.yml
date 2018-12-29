@@ -7,10 +7,13 @@ spring:
   application:
     name: zpoa
   datasource:
-    url: jdbc:mysql://192.168.10.175/zpoa?useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost/zpoa?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
   thymeleaf:
     cache: false
     mode: LEGACYHTML5
@@ -18,4 +21,3 @@ spring:
       content-type: text/html
   mvc:
     static-path-pattern: /static/**
-

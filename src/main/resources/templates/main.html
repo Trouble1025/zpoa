@@ -12,9 +12,6 @@
         layui.use(['element', 'layer'], function () {
             var element = layui.element;
             layer = layui.layer;
-            // element.on('nav(demo)', function (elem) {
-            //     layer.msg(elem.text());
-            // });
         });
 
     </script>
@@ -53,7 +50,7 @@
                     <a class="" href="javascript:;">加班</a>
                     <dl class="layui-nav-child">
                         <dd><a th:href="@{/overTime/openOverTime}" target="iframe">加班申请</a></dd>
-                        <dd><a target="iframe">加班审批</a></dd>
+                        <dd><a th:href="@{/overTime/openApprovalOverTime}" target="iframe">加班审批</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item layui-nav-itemed">
@@ -74,7 +71,7 @@
     </div>
 
     <div class="layui-body">
-        <iframe name="iframe" frameborder="no" style="overflow: visible;" scrolling="no" width="100%"
+        <iframe name="iframe" frameborder="no" style="overflow: visible;" width="100%"
                 height="100%"></iframe>
     </div>
 

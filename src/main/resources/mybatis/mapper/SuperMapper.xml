@@ -24,4 +24,35 @@
     <insert id="addStaffStateName" parameterType="java.lang.String">
         insert into oa_staffState values(null,#{addStaffStateName});
     </insert>
+
+    <update id="updPowerName" parameterType="m">
+        update oa_power set oa_power_name = #{newPowerName} where oa_power_id = #{powerId};
+    </update>
+    
+    <insert id="addNewPower" parameterType="java.lang.String">
+        insert into oa_power values(null,#{powerName});
+    </insert>
+
+    <select id="findPowerByRoleId" parameterType="java.lang.String" resultType="m">
+        SELECT p.oa_power_id,p.oa_power_name
+        FROM oa_power p,role_power rp
+        WHERE p.oa_power_id = rp.oa_power_id
+          AND rp.oa_role_id = #{roleId};
+    </select>
+
+    <delete id="delPowerByRoleId" parameterType="java.lang.String">
+        delete from role_power where oa_role_id = #{roleId};
+    </delete>
+
+    <insert id="addRolePower" parameterType="m">
+        insert into role_power values(#{roleId},#{powerId});
+    </insert>
+    
+    <select id="getPowerIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select oa_power_id from oa_power where oa_power_name = #{powerName};
+    </select>
+
+    <select id="getRoleNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        select oa_role_name from oa_role where oa_role_id = #{roleId};
+    </select>
 </mapper>

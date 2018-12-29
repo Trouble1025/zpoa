@@ -7,39 +7,93 @@
     <script th:src="@{/static/js/jquery.js}"></script>
     <script th:src="@{/static/layui/layui.js}"></script>
     <script>
+        var form;
+        var roleId; //已选中角色的id
 
         layui.use(['form', 'layer'], function () {
             form = layui.form;
             layer = layui.layer;
 
+            form.on('select(roleS)', function (data) {
+                roleId = data.value;
+                $.ajax({
+                    url: "/super/findPowerByRoleId",
+                    type: "post",
+                    data: {"roleId": $('select[name=role]').find('option:selected').val()},
+                    success: function (data) {
+                        var json = JSON.parse(data);
+                        $.each($('input[name^=power]'), function (i, p) {
+                            var $p = $(p);  //将复选框转换成jQuery对象
+                            $p.prop("checked",false);
+                            $.each(json,function (k,j) {
+                                if(p.value == j.oa_power_id){
+                                    $p.prop("checked",true);
+                                }
+                            });
+                        });
+                        form.render();
+                    }
+                });
+            });
+        });
+
+        $(function () {
+            $('#tjBtn').click(function () {
+                if(roleId != 0 && roleId != undefined && roleId != ""){
+                    var powerList = '';
+                    $.each($('input[name^=power]'),function (i,p) {
+                        var $p = $(p);
+                        if($p.is(':checked')){
+                            powerList+=($p.val()+",");
+                        }
+                    });
+
+                    $.ajax({
+                        url:"/super/addPowerForRole",
+                        type:"post",
+                        data:{"roleId":roleId,"powerList":powerList},
+                        success:function () {
+
+                        }
+                    });
+                }
+            });
         });
 
     </script>
 </head>
 <body>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>角色权限</legend>
+    <legend>权限分配</legend>
 </fieldset>
-<form class="layui-form">
+<form class="layui-form" id="powerForm">
     <div class="layui-form-item">
         <label class="layui-form-label">角色名称</label>
         <div class="layui-input-inline">
             <select lay-filter="roleS" name="role" lay-verify="required">
                 <option value="0"></option>
-                <option th:each="d:${deptList}" th:value="${d.oa_department_id}"
-                        th:text="${d.oa_department_name}"></option>
+                <option th:each="r:${roleList}" th:value="${r.oa_role_id}"
+                        th:text="${r.oa_role_name}"></option>
             </select>
         </div>
 
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">拥有权限</label>
-            <input type="checkbox" name="" title="写作" checked>
+        <label class="layui-form-label">操作权限</label>
+        <input type="checkbox" th:each="p,i:${powerList}" th:name="'power['+${i.count}+']'" th:title="${p.oa_power_name}"
+               th:value="${p.oa_power_id}">
     </div>
 
-    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-        <legend>访问权限</legend>
-    </fieldset>
+    <div class="layui-form-item">
+        <label class="layui-form-label">访问权限</label>
+        <input type="checkbox" name="" title="写作" checked>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button id="tjBtn" class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
+        </div>
+    </div>
 </form>
 </body>
 </html>

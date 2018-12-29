@@ -9,7 +9,10 @@ public interface StaffService {
     Map<String,Object> staffLogin(Map<String,Object> m);
 
     //查询所有员工信息
-    String findAllStaff();
+    String findAllStaff(Map m);
+
+    //查询所有员工数量
+    Integer allStaffCount(Map m);
 
     //添加员工
     void addStaff(Map<String,Object> m);
@@ -22,5 +25,8 @@ public interface StaffService {
 
     //所有员工状态
     List<Map<String,Object>> findAllStaffState();
+
+    //新增员工-角色
+    void addStaffRole(Map<String,Object> m);
 
 }

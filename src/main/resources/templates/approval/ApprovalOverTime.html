@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>审批加班</title>
+    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"/>
+    <script th:src="@{/static/js/jquery.js}"></script>
+    <script th:src="@{/static/layui/layui.js}"></script>
+    <script>
+
+        function createTime(v) {
+            var date = new Date(v);
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? '0' + m : m;
+            var d = date.getDate();
+            d = d < 10 ? ("0" + d) : d;
+            var str = y + "-" + m + "-" + d;
+            return str;
+        }
+
+        var table;
+        var layer;
+
+        layui.use(['table','layer'], function () {
+            table = layui.table;
+            layer = layui.layer;
+
+            table.render({
+                elem: '#needApproval'
+                , height: 'full'
+                , url: '/overTime/findNeedApprovalById' //数据接口
+                , page: true //开启分页,
+                , cols: [
+                    [ //表头
+                        {field: 'oa_staff_name', title: '申请人', sort: true},
+                        {field: 'oa_post_name', title: '岗位', sort: true},
+                        {
+                            field: 'oa_overTime_date', title: '加班日期', sort: true, templet: function (d) {
+                                return '<span>' + createTime(d.oa_overTime_date) + '</span>'
+                            }
+                        },
+                        {field: 'oa_overTime_reason', title: '加班原因', sort: true}
+                        , {field: 'oa_overTime_time', title: '加班时间', sort: true}
+                        , {
+                        field: 'oa_overTime_applyTime', title: '申请时间', sort: true, templet: function (d) {
+                            return '<span>' + createTime(d.oa_overTime_applyTime) + '</span>'
+                        }
+                    },{fixed: 'right', title:'操作', align:'center', toolbar: '#toolBar'}
+                    ]
+                ]
+            });
+
+            table.on('tool(approval)', function(obj){
+                // var data = obj.data //获得当前行数据
+                //     ,layEvent = obj.event; //获得 lay-event 对应的值
+                // if(layEvent === 'edit'){
+                //     console.log(data.oa_overTime_id);
+                //     $.ajax({
+                //         url:"/overTime/isLastPower",
+                //         type:"post",
+                //         data:{"overTimeId":data.oa_overTime_id},
+                //         success:function (data) {
+                //             console.log(data);
+                //         }
+                //     });
+                // }
+            });
+
+        });
+    </script>
+</head>
+<body>
+<table id="needApproval" lay-filter="approval"></table>
+<script type="text/html" id="toolBar">
+    {{#  if(d.isLastPower == 0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="appoint">提交</a>
+    {{#  } }}
+    {{#  if(d.isLastPower > 0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="adopt">通过</a>
+    {{#  } }}
+    <a class="layui-btn layui-btn-xs" lay-event="refuse">不通过</a>
+</script>
+</body>
+</html>
